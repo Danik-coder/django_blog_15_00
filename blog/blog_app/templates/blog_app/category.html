@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% load blog_tags %}
+
+
+{% block title %}
+Категория: {{ category.name }}
+{% endblock %}
+
+
+{% block content %}
+<div class="container">
+    <div class="d-flex my-4 align-items-center justify-content-between">
+        <h1>{{ category.name }}</h1>
+        <div class="d-flex gap-3">
+            {% if request.environ.QUERY_STRING == 'sort=-views' %}
+            <a href="?sort=views">По просмотрам</a>
+            {% else %}
+            <a href="?sort=-views">По просмотрам</a>
+            {% endif %}
+
+            {% if request.environ.QUERY_STRING == 'sort=-published_at' %}
+            <a href="?sort=published_at">По релевантности</a>
+            {% else %}
+            <a href="?sort=-published_at">По релевантности</a>
+            {% endif %}
+
+            {% if request.environ.QUERY_STRING == 'sort=-title' %}
+            <a href="?sort=title">А-Я</a>
+            {% else %}
+            <a href="?sort=-title">А-Я</a>
+            {% endif %}
+        </div>
+    </div>
+
+
+    <div class="row row-gap-4">
+        {% for post in posts %}
+        <div class="col-4">
+            {% include 'components/_post_card.html' %}
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock %}

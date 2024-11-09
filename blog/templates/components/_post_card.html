@@ -1,0 +1,32 @@
+<div class="card">
+    <img style="height: 304px; object-fit: cover;" src="{{ post.get_preview }}" class="card-img-top"
+         alt="...">
+    <div class="card-body">
+        <h5 class="card-title">{{ post.short_description }}</h5>
+        <p class="card-text"></div>
+    <ul class="list-group list-group-flush">
+
+        <li class="list-group-item">
+            <b>Дата создания </b><br> {{ post.published_at }}
+        </li>
+
+        <li class="list-group-item">
+            <b>Категория </b><br> {{ post.category }}
+        </li>
+
+        <li class="list-group-item">
+            <b>Автор </b><br> {{ post.author }}
+        </li>
+
+        <li class="list-group-item">
+            <b>Просмотры </b><br> {{ post.views }}
+        </li>
+
+        <li class="list-group-item">
+            <b>Обновлено </b><br> {{ post.updated_at }}
+        </li>
+    </ul>
+    <div class="card-body">
+        <a href="{% url 'post' post.pk %}" class="card-link">Подробнее</a>
+    </div>
+</div>

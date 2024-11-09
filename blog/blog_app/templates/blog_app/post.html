@@ -1,0 +1,168 @@
+{% extends 'base.html' %}
+
+{% load blog_tags %}
+
+{% block title %}
+{{ post.title }}
+{% endblock %}
+
+{% block extra_style %}
+<style>
+    html,
+    body {
+      position: relative;
+      height: 100%;
+    }
+
+    body {
+      background: #eee;
+      font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
+      font-size: 14px;
+      color: #000;
+      margin: 0;
+      padding: 0;
+    }
+
+    .swiper {
+      width: 100%;
+      padding-top: 50px;
+      padding-bottom: 50px;
+    }
+
+    .swiper-slide {
+      background-position: center;
+      background-size: cover;
+      width: 300px;
+      height: 300px;
+    }
+
+    .swiper-slide img {
+      display: block;
+      width: 100%;
+    }
+</style>
+{% endblock %}
+
+
+{% block content %}
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="staticBackdropLabel">Подтверждение</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        Действительно ли вы хотите удалить данный пост
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Оставить</button>
+        <a href="{% url 'delete_post' post.pk %}" class="btn btn-primary">Да, хочу</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-6">
+            <div class="swiper mySwiper">
+                <div class="swiper-wrapper">
+                    {% for object in gallery %}
+                    <div class="swiper-slide">
+                        <img src="{{ object.photo.url }}"/>
+                    </div>
+                    {% endfor %}
+                </div>
+                <div class="swiper-pagination"></div>
+            </div>
+        </div>
+        <div class="col-6 ">
+            <h1 class="text-center mb-4">{{ post.title }}</h1>
+            <div class="row justify-content-between align-items-end mb-4">
+                <div class="col-6">
+                    <b>Краткое описание: </b>
+                    <p class="fs-5 mb-0">{{ post.short_description }}</p>
+                </div>
+                <div class="col-6 text-end">
+                    {% if request.user.is_authenticated and request.user != post.author %}
+                    <a href="{% url 'add_vote' post.pk 'add_like' %}" class="btn btn-success">Лайк</a>
+                    <a href="{% url 'add_vote' post.pk 'add_dislike' %}" class="btn btn-danger">Дизлайк</a>
+                    {% endif %}
+                </div>
+            </div>
+
+            <ul class="list-group list-group-action mb-3">
+                <li class="list-group-item list-group-item-action"><b>Автор: </b>{{ post.author }}</li>
+                <li class="list-group-item list-group-item-action"><b>Категория: </b>{{ post.category }}</li>
+                <li class="list-group-item list-group-item-action"><b>Дата публикации: </b>{{ post.published_at }}</li>
+                <li class="list-group-item list-group-item-action"><b>Кол-во просмотров: </b>{{ post.views }}</li>
+                <li class="list-group-item list-group-item-action"><b>Лайки: </b>{{ total_likes }}</li>
+                <li class="list-group-item list-group-item-action"><b>Дизлайки: </b>{{ total_dislikes }}</li>
+            </ul>
+
+
+            <div class="btn-group mb-5" role="group" aria-label="Basic mixed styles example">
+                {% if request.user.is_authenticated and request.user == post.author %}
+                <button data-bs-target="#staticBackdrop" data-bs-toggle="modal" type="button" class="btn btn-danger text-warning-emphasis">Удалить</button>
+
+                <a href="{% url 'update_post' post.pk %}" type="button" class="btn btn-info text-white">Изменить</a>
+                {% endif %}
+            </div>
+
+
+        </div>
+    </div>
+    <div class="card mb-5">
+        <div class="card-header text-center fs-4">Полное описание</div>
+        <div class="card card-body">{{ post.full_description }}</div>
+    </div>
+    <h2 class="text-center">Коментарии</h2>
+    {% for comment in comments %}
+    <div class="card mb-3">
+        <div class="card-header">{{ comment.created_at }}</div>
+        <div class="card-body">
+            <blockquote class="blockquote mb-0">
+                <p>{{ comment.text }}</p>
+
+                <footer class="blockquote-footer">
+                    Автор: <cite title="Source Title">{{ comment.author }}</cite>
+                </footer>
+            </blockquote>
+        </div>
+    </div>
+    {% endfor %}
+
+    {% if request.user.is_authenticated %}
+    <form action="" METHOD="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button class="btn btn-dark mt-4">Отправить</button>
+        {% else %}
+        <p class="mt-5">Войдите в аккаунт для того чтобы оставить комментарий</p>
+        {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_script %}
+<script>
+    var swiper = new Swiper(".mySwiper", {
+      effect: "coverflow",
+      grabCursor: true,
+      centeredSlides: true,
+      slidesPerView: "auto",
+      coverflowEffect: {
+        rotate: 50,
+        stretch: 0,
+        depth: 100,
+        modifier: 1,
+        slideShadows: true,
+      },
+      pagination: {
+        el: ".swiper-pagination",
+      },
+    });
+</script>
+{% endblock %}
+
