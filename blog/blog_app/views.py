@@ -7,13 +7,11 @@ from django.views.generic import UpdateView
 
 # Create your views here.
 def home_page(request):
-    # categories = Category.objects.all()
     faqs = FAQ.objects.all()
     slides = Slider.objects.all()
     posters = Post.objects.all()
 
     context = {
-        # 'categories': categories
         'faqs': faqs,
         'slides': slides,
         'posters': posters,
